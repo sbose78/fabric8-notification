@@ -1,0 +1,6 @@
+{
+    "go.formatTool": "gofmt",
+    "go.lintOnSave": true,
+    "go.gopath": "/home/shbose/fabric8/auth",
+    "go.useLanguageServer":true
+}

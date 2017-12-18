@@ -78,6 +78,7 @@ func main() {
 	resolvers.Register("workitem.update", collector.ConfiguredVars(config, collector.NewWorkItemResolver(witClient)))
 	resolvers.Register("comment.create", collector.ConfiguredVars(config, collector.NewCommentResolver(witClient)))
 	resolvers.Register("comment.update", collector.ConfiguredVars(config, collector.NewCommentResolver(witClient)))
+	resolvers.Register("user.email.update", collector.ConfiguredVars(config, collector.NewUserResolver(witClient)))
 
 	typeRegistry := &template.AssetRegistry{}
 	service := goa.New("notification")

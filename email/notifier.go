@@ -14,10 +14,11 @@ type contextualNotification struct {
 }
 
 type Notification struct {
-	Type     string
-	ID       string
-	Resolver collector.ReceiverResolver
-	Template template.Template
+	Type             string
+	ID               string
+	CustomAttributes map[string]interface{}
+	Resolver         collector.ReceiverResolver
+	Template         template.Template
 }
 
 type Notifier interface {
@@ -80,6 +81,11 @@ func (a *AsyncWorkerNotifier) do(cn contextualNotification) {
 
 		return
 	}
+
+	for k, v := range notification.CustomAttributes {
+		vars[k] = v
+	}
+
 	subject, body, headers, err := notification.Template.Render(vars)
 	if err != nil {
 		log.Error(ctx, map[string]interface{}{

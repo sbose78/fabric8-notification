@@ -30,6 +30,7 @@ func NewNotifyController(service *goa.Service, cRegistry collector.Registry, tRe
 func (c *NotifyController) Send(ctx *app.SendNotifyContext) error {
 	nID := ctx.Payload.Data.Attributes.ID
 	nType := ctx.Payload.Data.Attributes.Type
+	customAttributes := ctx.Payload.Data.Attributes.Custom
 
 	var found bool
 	var template template.Template
@@ -52,7 +53,7 @@ func (c *NotifyController) Send(ctx *app.SendNotifyContext) error {
 		return jsonapi.JSONErrorResponse(ctx, errors.NewInternalError(ctx, fmt.Errorf("could not find ReceiverResolver for type %v", nType)))
 	}
 
-	c.Notifier.Send(ctx, email.Notification{ID: nID, Type: nType, Resolver: receiverResolver, Template: template})
+	c.Notifier.Send(ctx, email.Notification{ID: nID, Type: nType, CustomAttributes: customAttributes, Resolver: receiverResolver, Template: template})
 
 	return ctx.Accepted()
 }
