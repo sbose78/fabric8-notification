@@ -82,9 +82,7 @@ func (a *AsyncWorkerNotifier) do(cn contextualNotification) {
 		return
 	}
 
-	for k, v := range notification.CustomAttributes {
-		vars[k] = v
-	}
+	vars["custom"] = notification.CustomAttributes
 
 	subject, body, headers, err := notification.Template.Render(vars)
 	if err != nil {
