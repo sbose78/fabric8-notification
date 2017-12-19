@@ -83,10 +83,10 @@ func (a *AsyncWorkerNotifier) do(cn contextualNotification) {
 	}
 
 	if vars == nil {
-		vars = map[string]interface{}{
-			"custom": notification.CustomAttributes,
-		}
+		vars = map[string]interface{}{}
 	}
+
+	vars["custom"] = notification.CustomAttributes
 
 	subject, body, headers, err := notification.Template.Render(vars)
 	if err != nil {

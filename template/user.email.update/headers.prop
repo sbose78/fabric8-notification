@@ -1,2 +1,0 @@
-In-Reply-To: <workitems/{{.workitem.Data.ID}}@notify.openshift.io>
-References: <workitems/{{.workitem.Data.ID}}@notify.openshift.io>
