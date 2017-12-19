@@ -73,7 +73,7 @@ func generate(c *api.Client, id, tmplName string) error {
 	} else if strings.HasPrefix(tmplName, "user") {
 		_, vars, err = collector.User(context.Background(), c, wiID)
 		vars["custom"] = map[string]interface{}{
-			"VerifyURL": "https://auth.openshift.io?verify",
+			"verifyURL": "https://auth.openshift.io?verify",
 		}
 	} else {
 		return fmt.Errorf("Unkown resovler for template %v", tmplName)
