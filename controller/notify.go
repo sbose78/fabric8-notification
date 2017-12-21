@@ -32,17 +32,25 @@ func (c *NotifyController) Send(ctx *app.SendNotifyContext) error {
 	nType := ctx.Payload.Data.Attributes.Type
 	customAttributes := ctx.Payload.Data.Attributes.Custom
 
-	if nType == "user.email.update" {
-		_, found := customAttributes["verifyURL"]
-		if !found {
-			return jsonapi.JSONErrorResponse(ctx, errors.NewBadParameterError("data.attributes.custom.verifyURL", "nil"))
-		}
-	}
+	/*
+		if nType == "user.email.update" {
+			_, found := customAttributes["verifyURL"]
+			if !found {
+				return jsonapi.JSONErrorResponse(ctx, errors.NewBadParameterError("data.attributes.custom.verifyURL", "nil"))
+			}
+		}*/
 
 	var found bool
 	var template template.Template
 	var receiverResolver collector.ReceiverResolver
 
+	validator, found := c.CollectorRegistry.Validator(nType)
+	if found {
+		err := validator(ctx, customAttributes)
+		if err != nil {
+			return jsonapi.JSONErrorResponse(ctx, err)
+		}
+	}
 	if template, found = c.TemplateRegistry.Get(nType); !found {
 		log.Error(ctx, map[string]interface{}{
 			"err":  "template type not found",
