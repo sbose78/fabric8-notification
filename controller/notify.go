@@ -35,7 +35,7 @@ func (c *NotifyController) Send(ctx *app.SendNotifyContext) error {
 	if nType == "user.email.update" {
 		_, found := customAttributes["verifyURL"]
 		if !found {
-			return jsonapi.JSONErrorResponse(ctx, errors.NewBadParameterError("data.attributes.custom.verifyEmail", "nil"))
+			return jsonapi.JSONErrorResponse(ctx, errors.NewBadParameterError("data.attributes.custom.verifyURL", "nil"))
 		}
 	}
 
