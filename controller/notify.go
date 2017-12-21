@@ -32,14 +32,6 @@ func (c *NotifyController) Send(ctx *app.SendNotifyContext) error {
 	nType := ctx.Payload.Data.Attributes.Type
 	customAttributes := ctx.Payload.Data.Attributes.Custom
 
-	/*
-		if nType == "user.email.update" {
-			_, found := customAttributes["verifyURL"]
-			if !found {
-				return jsonapi.JSONErrorResponse(ctx, errors.NewBadParameterError("data.attributes.custom.verifyURL", "nil"))
-			}
-		}*/
-
 	var found bool
 	var template template.Template
 	var receiverResolver collector.ReceiverResolver
