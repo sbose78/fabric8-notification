@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/fabric8-services/fabric8-notification/app"
+	"github.com/fabric8-services/fabric8-notification/auth"
 	"github.com/fabric8-services/fabric8-notification/collector"
 	"github.com/fabric8-services/fabric8-notification/configuration"
 	"github.com/fabric8-services/fabric8-notification/controller"
@@ -14,13 +15,13 @@ import (
 	"github.com/fabric8-services/fabric8-notification/validator"
 	"github.com/fabric8-services/fabric8-notification/wit"
 
-	"github.com/Sirupsen/logrus"
 	witmiddleware "github.com/fabric8-services/fabric8-wit/goamiddleware"
 	"github.com/fabric8-services/fabric8-wit/log"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 	"github.com/goadesign/goa/middleware/gzip"
 	goajwt "github.com/goadesign/goa/middleware/security/jwt"
+	"github.com/sirupsen/logrus"
 
 	goalogrus "github.com/goadesign/goa/logging/logrus"
 )
@@ -65,6 +66,14 @@ func main() {
 		}, "Could not create WIT client")
 	}
 
+	authClient, err := auth.NewCachedClient(config.GetWITURL())
+	if err != nil {
+		log.Panic(nil, map[string]interface{}{
+			"url": config.GetWITURL(),
+			"err": err,
+		}, "Could not create WIT client")
+	}
+
 	sender, err := email.NewMandrillSender(config.GetMadrillAPIKey())
 	if err != nil {
 		log.Panic(nil, map[string]interface{}{
@@ -75,10 +84,10 @@ func main() {
 	notifier := email.NewAsyncWorkerNotifier(sender, 1)
 
 	resolvers := &collector.LocalRegistry{}
-	resolvers.Register("workitem.create", collector.ConfiguredVars(config, collector.NewWorkItemResolver(witClient)), nil)
-	resolvers.Register("workitem.update", collector.ConfiguredVars(config, collector.NewWorkItemResolver(witClient)), nil)
-	resolvers.Register("comment.create", collector.ConfiguredVars(config, collector.NewCommentResolver(witClient)), nil)
-	resolvers.Register("comment.update", collector.ConfiguredVars(config, collector.NewCommentResolver(witClient)), nil)
+	resolvers.Register("workitem.create", collector.ConfiguredVars(config, collector.NewWorkItemResolver(authClient, witClient)), nil)
+	resolvers.Register("workitem.update", collector.ConfiguredVars(config, collector.NewWorkItemResolver(authClient, witClient)), nil)
+	resolvers.Register("comment.create", collector.ConfiguredVars(config, collector.NewCommentResolver(authClient, witClient)), nil)
+	resolvers.Register("comment.update", collector.ConfiguredVars(config, collector.NewCommentResolver(authClient, witClient)), nil)
 	resolvers.Register("user.email.update", collector.ConfiguredVars(config, collector.NewUserResolver(witClient)), validator.ValidateUser)
 
 	typeRegistry := &template.AssetRegistry{}

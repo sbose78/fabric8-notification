@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/fabric8-services/fabric8-notification/auth"
+	authapi "github.com/fabric8-services/fabric8-notification/auth/api"
 	"github.com/fabric8-services/fabric8-notification/configuration"
 	"github.com/fabric8-services/fabric8-notification/wit"
 	"github.com/fabric8-services/fabric8-notification/wit/api"
@@ -13,23 +15,23 @@ import (
 	"github.com/goadesign/goa/uuid"
 )
 
-func NewCommentResolver(c *api.Client) ReceiverResolver {
+func NewCommentResolver(authclient *authapi.Client, c *api.Client) ReceiverResolver {
 	return func(ctx context.Context, id string) ([]Receiver, map[string]interface{}, error) {
 		cID, err := uuid.FromString(id)
 		if err != nil {
 			return []Receiver{}, nil, fmt.Errorf("unable to lookup comment based on id %v", id)
 		}
-		return Comment(ctx, c, cID)
+		return Comment(ctx, authclient, c, cID)
 	}
 }
 
-func NewWorkItemResolver(c *api.Client) ReceiverResolver {
+func NewWorkItemResolver(authclient *authapi.Client, c *api.Client) ReceiverResolver {
 	return func(ctx context.Context, id string) ([]Receiver, map[string]interface{}, error) {
 		wID, err := uuid.FromString(id)
 		if err != nil {
 			return []Receiver{}, nil, fmt.Errorf("unable to lookup Workitem based on id %v", id)
 		}
-		return WorkItem(ctx, c, wID)
+		return WorkItem(ctx, authclient, c, wID)
 	}
 }
 
@@ -45,7 +47,7 @@ func ConfiguredVars(config *configuration.Data, resolver ReceiverResolver) Recei
 	}
 }
 
-func Comment(ctx context.Context, c *api.Client, cID uuid.UUID) ([]Receiver, map[string]interface{}, error) {
+func Comment(ctx context.Context, authClient *authapi.Client, c *api.Client, cID uuid.UUID) ([]Receiver, map[string]interface{}, error) {
 	var values = map[string]interface{}{}
 	var errors []error
 	var users []uuid.UUID
@@ -121,7 +123,7 @@ func Comment(ctx context.Context, c *api.Client, cID uuid.UUID) ([]Receiver, map
 		values["actor"] = actor
 	}
 
-	sc, err := wit.GetSpaceCollaborators(ctx, c, spaceID)
+	sc, err := auth.GetSpaceCollaborators(ctx, authClient, spaceID)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -140,7 +142,7 @@ func Comment(ctx context.Context, c *api.Client, cID uuid.UUID) ([]Receiver, map
 	return resolved, values, nil
 }
 
-func WorkItem(ctx context.Context, c *api.Client, wiID uuid.UUID) ([]Receiver, map[string]interface{}, error) {
+func WorkItem(ctx context.Context, authclient *authapi.Client, c *api.Client, wiID uuid.UUID) ([]Receiver, map[string]interface{}, error) {
 	var values = map[string]interface{}{}
 	var errors []error
 	var users []uuid.UUID
@@ -201,7 +203,7 @@ func WorkItem(ctx context.Context, c *api.Client, wiID uuid.UUID) ([]Receiver, m
 		values["actor"] = actor
 	}
 
-	sc, err := wit.GetSpaceCollaborators(ctx, c, spaceID)
+	sc, err := auth.GetSpaceCollaborators(ctx, authclient, spaceID)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -220,7 +222,7 @@ func WorkItem(ctx context.Context, c *api.Client, wiID uuid.UUID) ([]Receiver, m
 	return resolved, values, nil
 }
 
-func resolveAllUsers(ctx context.Context, c *api.Client, users []uuid.UUID, collaborators []*api.UserData) ([]Receiver, error) {
+func resolveAllUsers(ctx context.Context, c *api.Client, users []uuid.UUID, collaborators []*authapi.UserData) ([]Receiver, error) {
 	var resolved []Receiver
 
 	for _, u := range users {
@@ -260,7 +262,7 @@ func resolveAllUsers(ctx context.Context, c *api.Client, users []uuid.UUID, coll
 	return resolved, nil
 }
 
-func collectSpaceCollaboratorUsers(cl *api.UserList) []uuid.UUID {
+func collectSpaceCollaboratorUsers(cl *authapi.UserList) []uuid.UUID {
 	var users []uuid.UUID
 	for _, c := range cl.Data {
 		cID, err := uuid.FromString(*c.ID)

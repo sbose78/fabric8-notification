@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/spf13/viper"
@@ -17,6 +17,7 @@ const (
 	varHTTPAddress          = "http.address"
 	varDeveloperModeEnabled = "developer.mode.enabled"
 	varWITURL               = "wit.url"
+	varAuthURL              = "auth.url"
 	varMadrillAPIKey        = "mandrill.apikey"
 	varKeycloakRealm        = "keycloak.realm"
 	varKeycloakURL          = "keycloak.url"
@@ -77,6 +78,7 @@ func (c *Data) setConfigDefaults() {
 	c.v.SetDefault(varHTTPAddress, "0.0.0.0:8080")
 
 	c.v.SetDefault(varWITURL, defaultWITURL)
+	c.v.SetDefault(varAuthURL, defaultAuthURL)
 
 	//-----
 	// Misc
@@ -104,6 +106,11 @@ func (c *Data) IsDeveloperModeEnabled() bool {
 
 // GetWITURL return the base WorkItemTracker API URL
 func (c *Data) GetWITURL() string {
+	return c.v.GetString(varWITURL)
+}
+
+// GetAuthURL return the base Auth API URL
+func (c *Data) GetAuthURL() string {
 	return c.v.GetString(varWITURL)
 }
 
@@ -177,7 +184,8 @@ func (c *Data) Validate() error {
 }
 
 const (
-	defaultWITURL = "https://api.openshift.io/"
+	defaultWITURL  = "https://api.openshift.io/"
+	defaultAuthURL = "https://auth.openshift.io/"
 
 	// Auth-related defaults
 	defaultKeycloakURL   = "https://sso.prod-preview.openshift.io"
