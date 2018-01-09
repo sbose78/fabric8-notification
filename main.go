@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	goaclient "github.com/goadesign/goa/client"
 	"net/http"
 
 	"github.com/fabric8-services/fabric8-notification/app"
@@ -12,6 +14,7 @@ import (
 	"github.com/fabric8-services/fabric8-notification/jsonapi"
 	"github.com/fabric8-services/fabric8-notification/keycloak"
 	"github.com/fabric8-services/fabric8-notification/template"
+	"github.com/fabric8-services/fabric8-notification/token"
 	"github.com/fabric8-services/fabric8-notification/validator"
 	"github.com/fabric8-services/fabric8-notification/wit"
 
@@ -71,8 +74,21 @@ func main() {
 		log.Panic(nil, map[string]interface{}{
 			"url": config.GetWITURL(),
 			"err": err,
-		}, "Could not create WIT client")
+		}, "Could not create Auth client")
 	}
+
+	saService := token.NewFabric8ServiceAccountTokenClient(authClient, config.GetServiceAccountID(), config.GetServiceAccountSecret())
+	saToken, err := saService.Get(context.Background())
+
+	authClient.SetJWTSigner(&goaclient.JWTSigner{
+		TokenSource: &goaclient.StaticTokenSource{
+			StaticToken: &goaclient.StaticToken{
+				Value: saToken,
+			},
+		},
+	})
+
+	// TODO: How do we handle expiry of this token ?
 
 	sender, err := email.NewMandrillSender(config.GetMadrillAPIKey())
 	if err != nil {
