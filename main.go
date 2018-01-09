@@ -77,18 +77,23 @@ func main() {
 		}, "Could not create Auth client")
 	}
 
+	// using a saService here with the plan to pass it to controllers
+	// in future.
 	saService := token.NewFabric8ServiceAccountTokenClient(authClient, config.GetServiceAccountID(), config.GetServiceAccountSecret())
 	saToken, err := saService.Get(context.Background())
+	if err != nil {
+		log.Panic(nil, map[string]interface{}{
+			"err": err,
+		}, "could not generate service account token")
+	}
 
 	authClient.SetJWTSigner(&goaclient.JWTSigner{
 		TokenSource: &goaclient.StaticTokenSource{
 			StaticToken: &goaclient.StaticToken{
-				Value: saToken,
+				Value: saToken, // TODO: How do we handle expiry of this token ?
 			},
 		},
 	})
-
-	// TODO: How do we handle expiry of this token ?
 
 	sender, err := email.NewMandrillSender(config.GetMadrillAPIKey())
 	if err != nil {
