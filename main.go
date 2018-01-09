@@ -93,7 +93,8 @@ func main() {
 		log.Panic(nil, map[string]interface{}{
 			"err": err,
 		}, "Could not create Madrill Sender")
-	}
+	}	goaclient "github.com/goadesign/goa/client"
+	
 
 	notifier := email.NewAsyncWorkerNotifier(sender, 1)
 

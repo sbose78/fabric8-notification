@@ -2,7 +2,7 @@ package collector
 
 import (
 	"context"
-	"fmt"
+	"fmt"detailURL
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/fabric8-services/fabric8-notification/auth"
