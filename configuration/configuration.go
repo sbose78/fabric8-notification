@@ -88,8 +88,8 @@ func (c *Data) setConfigDefaults() {
 	c.v.SetDefault(varDeveloperModeEnabled, false)
 	c.v.SetDefault(varLogLevel, defaultLogLevel)
 
-	c.v.SetDefault(varServiceAccountID, "4c83ca2d-6dcc-41c9-ac7d-b068ad4d17c5")
-	c.v.SetDefault(varServiceAccountSecret, "notificationsecret")
+	c.v.SetDefault(varServiceAccountID, "4c34f6d4-f00b-487b-9a1f-e7d1adba6866")
+	c.v.SetDefault(varServiceAccountSecret, "notificationSecretNew")
 }
 
 // GetHTTPAddress returns the HTTP address (as set via default, config file, or environment variable)
@@ -111,7 +111,7 @@ func (c *Data) GetWITURL() string {
 
 // GetAuthURL return the base Auth API URL
 func (c *Data) GetAuthURL() string {
-	return c.v.GetString(varWITURL)
+	return c.v.GetString(varAuthURL)
 }
 
 // GetServiceAccountID returns service account ID for the notification service.
@@ -185,7 +185,7 @@ func (c *Data) Validate() error {
 
 const (
 	defaultWITURL  = "https://api.openshift.io/"
-	defaultAuthURL = "https://auth.openshift.io/"
+	defaultAuthURL = "http://localhost:8089/"
 
 	// Auth-related defaults
 	defaultKeycloakURL   = "https://sso.prod-preview.openshift.io"

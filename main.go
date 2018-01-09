@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	goaclient "github.com/goadesign/goa/client"
 	"net/http"
 
 	"github.com/fabric8-services/fabric8-notification/app"
@@ -69,12 +68,12 @@ func main() {
 		}, "Could not create WIT client")
 	}
 
-	authClient, err := auth.NewCachedClient(config.GetWITURL())
+	authClient, err := auth.NewCachedClient(config.GetAuthURL())
 	if err != nil {
 		log.Panic(nil, map[string]interface{}{
-			"url": config.GetWITURL(),
+			"url": config.GetAuthURL(),
 			"err": err,
-		}, "Could not create Auth client")
+		}, "could not create Auth client")
 	}
 
 	// using a saService here with the plan to pass it to controllers
@@ -87,13 +86,7 @@ func main() {
 		}, "could not generate service account token")
 	}
 
-	authClient.SetJWTSigner(&goaclient.JWTSigner{
-		TokenSource: &goaclient.StaticTokenSource{
-			StaticToken: &goaclient.StaticToken{
-				Value: saToken, // TODO: How do we handle expiry of this token ?
-			},
-		},
-	})
+	authClient, err = auth.SecureClient(authClient, saToken)
 
 	sender, err := email.NewMandrillSender(config.GetMadrillAPIKey())
 	if err != nil {
