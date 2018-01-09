@@ -74,3 +74,18 @@ func GetSpaceCollaborators(ctx context.Context, client *api.Client, spaceID uuid
 	}
 	return client.DecodeUserList(resp)
 }
+
+func GetServiceAccountToken(ctx context.Context, client *api.Client, serviceAccountID string, serviceAccountSecret string) (*api.OauthToken, error) {
+	payload := api.TokenExchange{
+		ClientID:     serviceAccountID,
+		ClientSecret: &serviceAccountSecret,
+		GrantType:    "client_credentials",
+	}
+	resp, err := client.ExchangeToken(goasupport.ForwardContextRequestID(ctx), api.ExchangeTokenPath(), &payload, "application/x-www-form-urlencoded")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return client.DecodeOauthToken(resp)
+}

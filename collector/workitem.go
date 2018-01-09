@@ -59,7 +59,7 @@ func Comment(ctx context.Context, authClient *authapi.Client, c *api.Client, cID
 	values["comment"] = comment
 	users = append(users, collectCommentUsers(comment)...)
 
-	commentOwner, err := wit.GetUser(ctx, c, *comment.Data.Relationships.CreatedBy.Data.ID)
+	commentOwner, err := auth.GetUser(ctx, authClient, *comment.Data.Relationships.CreatedBy.Data.ID)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -75,7 +75,7 @@ func Comment(ctx context.Context, authClient *authapi.Client, c *api.Client, cID
 	values["workitem"] = wi
 
 	ownerID, _ := uuid.FromString(*wi.Data.Relationships.Creator.Data.ID)
-	workitemOwner, err := wit.GetUser(ctx, c, ownerID)
+	workitemOwner, err := auth.GetUser(ctx, authClient, ownerID)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -102,7 +102,7 @@ func Comment(ctx context.Context, authClient *authapi.Client, c *api.Client, cID
 	users = append(users, collectSpaceUsers(s)...)
 	values["space"] = s
 
-	spaceOwner, err := wit.GetUser(ctx, c, *s.Data.Relationships.OwnedBy.Data.ID)
+	spaceOwner, err := auth.GetUser(ctx, authClient, *s.Data.Relationships.OwnedBy.Data.ID)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -116,7 +116,7 @@ func Comment(ctx context.Context, authClient *authapi.Client, c *api.Client, cID
 
 	actorID, err := getActorID(ctx)
 	if err == nil {
-		actor, err := wit.GetUser(ctx, c, actorID)
+		actor, err := auth.GetUser(ctx, authClient, actorID)
 		if err != nil {
 			errors = append(errors, err)
 		}
@@ -155,7 +155,7 @@ func WorkItem(ctx context.Context, authclient *authapi.Client, c *api.Client, wi
 	users = append(users, collectWorkItemUsers(wi)...)
 
 	ownerID, _ := uuid.FromString(*wi.Data.Relationships.Creator.Data.ID)
-	workitemOwner, err := wit.GetUser(ctx, c, ownerID)
+	workitemOwner, err := auth.GetUser(ctx, authclient, ownerID)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -182,7 +182,7 @@ func WorkItem(ctx context.Context, authclient *authapi.Client, c *api.Client, wi
 	values["space"] = s
 	users = append(users, collectSpaceUsers(s)...)
 
-	spaceOwner, err := wit.GetUser(ctx, c, *s.Data.Relationships.OwnedBy.Data.ID)
+	spaceOwner, err := auth.GetUser(ctx, authclient, *s.Data.Relationships.OwnedBy.Data.ID)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -196,7 +196,7 @@ func WorkItem(ctx context.Context, authclient *authapi.Client, c *api.Client, wi
 
 	actorID, err := getActorID(ctx)
 	if err == nil {
-		actor, err := wit.GetUser(ctx, c, actorID)
+		actor, err := auth.GetUser(ctx, authclient, actorID)
 		if err != nil {
 			errors = append(errors, err)
 		}

@@ -30,22 +30,6 @@ func NewCachedClient(hostURL string) (*api.Client, error) {
 	return c, nil
 }
 
-func GetUser(ctx context.Context, client *api.Client, uID uuid.UUID) (*api.User, error) {
-	resp, err := client.ShowUsers(goasupport.ForwardContextRequestID(ctx), api.ShowUsersPath(uID.String()))
-	if resp != nil {
-		defer resp.Body.Close()
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("non %v status code for %v, returned %v", http.StatusOK, "GET user", resp.StatusCode)
-	}
-
-	if err != nil {
-		return nil, err
-	}
-	return client.DecodeUser(resp)
-}
-
 func GetWorkItem(ctx context.Context, client *api.Client, wiID uuid.UUID) (*api.WorkItemSingle, error) {
 	resp, err := client.ShowWorkitem(goasupport.ForwardContextRequestID(ctx), api.ShowWorkitemPath(wiID), nil, nil)
 	if resp != nil {

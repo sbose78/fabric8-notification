@@ -22,6 +22,7 @@ func createClient(t *testing.T) *api.Client {
 	return c
 }
 
+/*
 func TestGetUser(t *testing.T) {
 
 	c := createClient(t)
@@ -34,6 +35,7 @@ func TestGetUser(t *testing.T) {
 
 	assert.Equal(t, "aslak@redhat.com", *u.Data.Attributes.Email)
 }
+*/
 
 func TestWorkItem(t *testing.T) {
 
