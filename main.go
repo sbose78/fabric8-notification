@@ -88,7 +88,7 @@ func main() {
 	resolvers.Register("workitem.update", collector.ConfiguredVars(config, collector.NewWorkItemResolver(authClient, witClient)), nil)
 	resolvers.Register("comment.create", collector.ConfiguredVars(config, collector.NewCommentResolver(authClient, witClient)), nil)
 	resolvers.Register("comment.update", collector.ConfiguredVars(config, collector.NewCommentResolver(authClient, witClient)), nil)
-	resolvers.Register("user.email.update", collector.ConfiguredVars(config, collector.NewUserResolver(witClient)), validator.ValidateUser)
+	resolvers.Register("user.email.update", collector.ConfiguredVars(config, collector.NewUserResolver(authClient)), validator.ValidateUser)
 
 	typeRegistry := &template.AssetRegistry{}
 	service := goa.New("notification")

@@ -75,7 +75,7 @@ func generate(authClient *authapi.Client, c *api.Client, id, tmplName string) er
 	} else if strings.HasPrefix(tmplName, "comment") {
 		_, vars, err = collector.Comment(context.Background(), authClient, c, wiID)
 	} else if strings.HasPrefix(tmplName, "user") {
-		_, vars, err = collector.User(context.Background(), c, wiID)
+		_, vars, err = collector.User(context.Background(), authClient, wiID)
 		vars["custom"] = map[string]interface{}{
 			"verifyURL": "https://auth.openshift.io?verify",
 		}

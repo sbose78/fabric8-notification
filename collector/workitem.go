@@ -129,7 +129,7 @@ func Comment(ctx context.Context, authClient *authapi.Client, c *api.Client, cID
 	}
 	users = append(users, collectSpaceCollaboratorUsers(sc)...)
 
-	resolved, err := resolveAllUsers(ctx, c, SliceUniq(users), sc.Data)
+	resolved, err := resolveAllUsers(ctx, authClient, SliceUniq(users), sc.Data)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -209,7 +209,7 @@ func WorkItem(ctx context.Context, authclient *authapi.Client, c *api.Client, wi
 	}
 	users = append(users, collectSpaceCollaboratorUsers(sc)...)
 
-	resolved, err := resolveAllUsers(ctx, c, SliceUniq(users), sc.Data)
+	resolved, err := resolveAllUsers(ctx, authclient, SliceUniq(users), sc.Data)
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -222,7 +222,7 @@ func WorkItem(ctx context.Context, authclient *authapi.Client, c *api.Client, wi
 	return resolved, values, nil
 }
 
-func resolveAllUsers(ctx context.Context, c *api.Client, users []uuid.UUID, collaborators []*authapi.UserData) ([]Receiver, error) {
+func resolveAllUsers(ctx context.Context, c *authapi.Client, users []uuid.UUID, collaborators []*authapi.UserData) ([]Receiver, error) {
 	var resolved []Receiver
 
 	for _, u := range users {
@@ -240,7 +240,7 @@ func resolveAllUsers(ctx context.Context, c *api.Client, users []uuid.UUID, coll
 			}
 		}
 		if !found {
-			usr, err := wit.GetUser(ctx, c, u)
+			usr, err := auth.GetUser(ctx, c, u)
 			if err == nil {
 				if usr.Data.Attributes.Email != nil {
 					user := Receiver{EMail: *usr.Data.Attributes.Email}
