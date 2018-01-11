@@ -9,7 +9,6 @@ import (
 
 	"github.com/fabric8-services/fabric8-notification/auth/api"
 	"github.com/fabric8-services/fabric8-wit/goasupport"
-	"github.com/fabric8-services/fabric8-wit/log"
 	goaclient "github.com/goadesign/goa/client"
 	"github.com/goadesign/goa/uuid"
 	"github.com/gregjones/httpcache"
