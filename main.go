@@ -8,7 +8,6 @@ import (
 	"github.com/fabric8-services/fabric8-notification/auth"
 	"github.com/fabric8-services/fabric8-notification/collector"
 	goaclient "github.com/goadesign/goa/client"
-	"github.com/goadesign/goa/uuid"
 
 	"github.com/fabric8-services/fabric8-notification/configuration"
 	"github.com/fabric8-services/fabric8-notification/controller"
