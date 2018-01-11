@@ -186,7 +186,7 @@ clean-generated:
 	-rm -rf ./swagger/
 	-rm -f ./migration/sqlbindata.go
 	-rm -f ./template/bindata.go
-	-rm -rf auth
+	-rm -rf auth/api
 
 CLEAN_TARGETS += clean-vendor
 .PHONY: clean-vendor
