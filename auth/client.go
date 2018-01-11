@@ -9,6 +9,7 @@ import (
 
 	"github.com/fabric8-services/fabric8-notification/auth/api"
 	"github.com/fabric8-services/fabric8-wit/goasupport"
+	"github.com/fabric8-services/fabric8-wit/log"
 	goaclient "github.com/goadesign/goa/client"
 	"github.com/goadesign/goa/uuid"
 	"github.com/gregjones/httpcache"
@@ -46,19 +47,4 @@ func GetSpaceCollaborators(ctx context.Context, client *api.Client, spaceID uuid
 		return nil, err
 	}
 	return client.DecodeUserList(resp)
-}
-
-func GetServiceAccountToken(ctx context.Context, client *api.Client, serviceAccountID string, serviceAccountSecret string) (*api.OauthToken, error) {
-	payload := api.TokenExchange{
-		ClientID:     serviceAccountID,
-		ClientSecret: &serviceAccountSecret,
-		GrantType:    "client_credentials",
-	}
-	resp, err := client.ExchangeToken(goasupport.ForwardContextRequestID(ctx), api.ExchangeTokenPath(), &payload, "application/x-www-form-urlencoded")
-
-	if err != nil {
-		return nil, err
-	}
-
-	return client.DecodeOauthToken(resp)
 }
