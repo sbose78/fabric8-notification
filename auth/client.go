@@ -14,17 +14,6 @@ import (
 	"github.com/gregjones/httpcache"
 )
 
-func SecureClient(authClient *api.Client, token string) (*api.Client, error) {
-	authClient.SetJWTSigner(&goaclient.JWTSigner{
-		TokenSource: &goaclient.StaticTokenSource{
-			StaticToken: &goaclient.StaticToken{
-				Value: token,
-			},
-		},
-	})
-	return authClient, nil
-}
-
 func NewCachedClient(hostURL string) (*api.Client, error) {
 
 	u, err := url.Parse(hostURL)
@@ -39,22 +28,6 @@ func NewCachedClient(hostURL string) (*api.Client, error) {
 	c.Host = u.Host
 	c.Scheme = u.Scheme
 	return c, nil
-}
-
-func GetUser(ctx context.Context, client *api.Client, uID uuid.UUID) (*api.User, error) {
-	resp, err := client.ShowUsers(goasupport.ForwardContextRequestID(ctx), api.ShowUsersPath(uID.String()), nil, nil)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("non %v status code for %v, returned %v", http.StatusOK, "GET user", resp.StatusCode)
-	}
-
-	if err != nil {
-		return nil, err
-	}
-	return client.DecodeUser(resp)
 }
 
 func GetSpaceCollaborators(ctx context.Context, client *api.Client, spaceID uuid.UUID) (*api.UserList, error) {

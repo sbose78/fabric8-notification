@@ -89,7 +89,9 @@ func (c *Data) setConfigDefaults() {
 	c.v.SetDefault(varLogLevel, defaultLogLevel)
 
 	c.v.SetDefault(varServiceAccountID, "4c34f6d4-f00b-487b-9a1f-e7d1adba6866")
-	c.v.SetDefault(varServiceAccountSecret, "notificationSecretNew")
+	c.v.SetDefault(varServiceAccountSecret, "secret")
+
+	// c.v.SetDefault(varMadrillAPIKey, "1234") // Enable for local testing.
 }
 
 // GetHTTPAddress returns the HTTP address (as set via default, config file, or environment variable)

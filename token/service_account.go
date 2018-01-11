@@ -2,8 +2,11 @@ package token
 
 import (
 	"context"
+	"errors"
 	"github.com/fabric8-services/fabric8-notification/auth/api"
+	errs "github.com/fabric8-services/fabric8-wit/errors"
 	"github.com/fabric8-services/fabric8-wit/goasupport"
+	"github.com/fabric8-services/fabric8-wit/log"
 )
 
 type Fabric8ServiceAccountTokenClient struct {
@@ -27,7 +30,14 @@ type Fabric8ServiceAccountTokenService interface {
 func (c *Fabric8ServiceAccountTokenClient) Get(ctx context.Context) (string, error) {
 	tokenString, err := getServiceAccountToken(ctx, c.client, c.accountID, c.accountSecret)
 	if err != nil {
+		log.Error(ctx, map[string]interface{}{
+			"err": err,
+		}, "unable to get service account token")
 		return "", err
+	}
+
+	if tokenString == nil {
+		return "", errs.NewInternalError(ctx, errors.New("couldn't generate service account token"))
 	}
 	return *tokenString.AccessToken, nil
 }
@@ -40,9 +50,17 @@ func getServiceAccountToken(ctx context.Context, client *api.Client, serviceAcco
 	}
 	resp, err := client.ExchangeToken(goasupport.ForwardContextRequestID(ctx), api.ExchangeTokenPath(), &payload, "application/x-www-form-urlencoded")
 
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
 	if err != nil {
+		log.Error(ctx, map[string]interface{}{
+			"err": err,
+		}, "failed to get service account token from auth")
 		return nil, err
 	}
 
 	return client.DecodeOauthToken(resp)
+
 }

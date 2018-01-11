@@ -7,6 +7,9 @@ import (
 	"github.com/fabric8-services/fabric8-notification/app"
 	"github.com/fabric8-services/fabric8-notification/auth"
 	"github.com/fabric8-services/fabric8-notification/collector"
+	goaclient "github.com/goadesign/goa/client"
+	"github.com/goadesign/goa/uuid"
+
 	"github.com/fabric8-services/fabric8-notification/configuration"
 	"github.com/fabric8-services/fabric8-notification/controller"
 	"github.com/fabric8-services/fabric8-notification/email"
@@ -76,8 +79,9 @@ func main() {
 		}, "could not create Auth client")
 	}
 
-	// using a saService here with the plan to pass it to controllers
-	// in future.
+	// Calling the Auth service to generate a fabric8 service account token.
+	// This is needed to call /api/users/ID and 'see' the
+	// email address even if the user has made it 'private'
 	saService := token.NewFabric8ServiceAccountTokenClient(authClient, config.GetServiceAccountID(), config.GetServiceAccountSecret())
 	saToken, err := saService.Get(context.Background())
 	if err != nil {
@@ -86,7 +90,14 @@ func main() {
 		}, "could not generate service account token")
 	}
 
-	authClient, err = auth.SecureClient(authClient, saToken)
+	// update the client with the signer.
+	authClient.SetJWTSigner(&goaclient.JWTSigner{
+		TokenSource: &goaclient.StaticTokenSource{
+			StaticToken: &goaclient.StaticToken{
+				Value: saToken,
+			},
+		},
+	})
 
 	sender, err := email.NewMandrillSender(config.GetMadrillAPIKey())
 	if err != nil {
