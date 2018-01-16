@@ -39,10 +39,10 @@ func (c *Fabric8ServiceAccountTokenClient) Get(ctx context.Context) (string, err
 	if tokenString == nil {
 		return "", errs.NewInternalError(ctx, errors.New("couldn't generate service account token"))
 	}
-	return *tokenString.AccessToken, nil
+	return tokenString.AccessToken, nil
 }
 
-func getServiceAccountToken(ctx context.Context, client *api.Client, serviceAccountID string, serviceAccountSecret string) (*api.OauthToken, error) {
+func getServiceAccountToken(ctx context.Context, client *api.Client, serviceAccountID string, serviceAccountSecret string) (*api.ExternalToken, error) {
 	payload := api.TokenExchange{
 		ClientID:     serviceAccountID,
 		ClientSecret: &serviceAccountSecret,
@@ -61,6 +61,6 @@ func getServiceAccountToken(ctx context.Context, client *api.Client, serviceAcco
 		return nil, err
 	}
 
-	return client.DecodeOauthToken(resp)
+	return client.DecodeExternalToken(resp)
 
 }
