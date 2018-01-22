@@ -46,7 +46,7 @@ func showUsers(ctx context.Context, client *api.Client, path string, ifModifiedS
 	return client.Do(ctx, req)
 }
 
-// bewShowUsersRequest create the request corresponding to the show action endpoint of the users resource.
+// newShowUsersRequest create the request corresponding to the show action endpoint of the users resource.
 func newShowUsersRequest(ctx context.Context, client *api.Client, path string, ifModifiedSince *string, ifNoneMatch *string) (*http.Request, error) {
 	scheme := client.Scheme
 	if scheme == "" {

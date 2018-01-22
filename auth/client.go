@@ -36,6 +36,8 @@ func GetSpaceCollaborators(ctx context.Context, client *api.Client, spaceID uuid
 	resp, err := client.ListCollaborators(goasupport.ForwardContextRequestID(ctx), api.ListCollaboratorsPath(spaceID), &pageLimit, &pageOffset, nil, nil)
 	if resp != nil {
 		defer resp.Body.Close()
+	} else {
+		return nil, fmt.Errorf("failed to make request to get list of collaborators")
 	}
 
 	if resp.StatusCode != http.StatusOK {
