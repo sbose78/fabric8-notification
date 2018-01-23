@@ -34,6 +34,9 @@ func GetSpaceCollaborators(ctx context.Context, client *api.Client, spaceID uuid
 	pageLimit := 100
 	pageOffset := "0"
 	resp, err := client.ListCollaborators(goasupport.ForwardContextRequestID(ctx), api.ListCollaboratorsPath(spaceID), &pageLimit, &pageOffset, nil, nil)
+	if err != nil {
+		return nil, err
+	}
 	if resp != nil {
 		defer resp.Body.Close()
 	} else {
@@ -42,10 +45,6 @@ func GetSpaceCollaborators(ctx context.Context, client *api.Client, spaceID uuid
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("non %v status code for %v, returned %v", http.StatusOK, "GET collaborators", resp.StatusCode)
-	}
-
-	if err != nil {
-		return nil, err
 	}
 	return client.DecodeUserList(resp)
 }
