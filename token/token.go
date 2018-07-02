@@ -15,12 +15,6 @@ type tokenManagerConfiguration interface {
 	GetAuthURL() string
 }
 
-// Permissions represents a "permissions" in the AuthorizationPayload
-type Permissions struct {
-	ResourceSetName *string `json:"resource_set_name"`
-	ResourceSetID   *string `json:"resource_set_id"`
-}
-
 type PublicKey struct {
 	KeyID string
 	Key   *rsa.PublicKey
@@ -61,14 +55,6 @@ func NewManager(config tokenManagerConfiguration) (Manager, error) {
 		}, "Public key added")
 	}
 	return tm, nil
-}
-
-// NewManagerWithPublicKey returns a new token Manager for handling tokens with the only public key
-func NewManagerWithPublicKey(id string, key *rsa.PublicKey) Manager {
-	return &tokenManager{
-		publicKeysMap: map[string]*rsa.PublicKey{id: key},
-		publicKeys:    []*PublicKey{{KeyID: id, Key: key}},
-	}
 }
 
 // PublicKey returns the public key by the ID
