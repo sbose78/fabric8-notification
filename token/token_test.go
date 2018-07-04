@@ -18,7 +18,7 @@ func TestManager(t *testing.T) {
 	old := os.Getenv("F8_AUTH_URL")
 	defer os.Setenv("F8_AUTH_URL", old)
 
-	os.Setenv("F8_AUTH_URL", "https://auth.openshift.io")
+	os.Setenv("F8_AUTH_URL", OpenShiftIOAuthAPI)
 	config, err := configuration.GetData()
 	require.NoError(t, err)
 	require.NotNil(t, config)
