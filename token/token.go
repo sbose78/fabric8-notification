@@ -22,7 +22,6 @@ type PublicKey struct {
 
 // Manager generate and find auth token information
 type Manager interface {
-	PublicKey(kid string) *rsa.PublicKey
 	PublicKeys() []*rsa.PublicKey
 }
 
@@ -55,11 +54,6 @@ func NewManager(config tokenManagerConfiguration) (Manager, error) {
 		}, "Public key added")
 	}
 	return tm, nil
-}
-
-// PublicKey returns the public key by the ID
-func (mgm *tokenManager) PublicKey(kid string) *rsa.PublicKey {
-	return mgm.publicKeysMap[kid]
 }
 
 // PublicKeys returns all the public keys
