@@ -1,15 +1,12 @@
 package token_test
 
 import (
-	//"context"
 	"os"
 	"testing"
 
 	"github.com/fabric8-services/fabric8-notification/configuration"
 	"github.com/fabric8-services/fabric8-notification/token"
-	//"github.com/fabric8-services/fabric8-notification/collector"
-	//"github.com/goadesign/goa/uuid"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -23,14 +20,15 @@ func TestManager(t *testing.T) {
 
 	os.Setenv("F8_AUTH_URL", "https://auth.openshift.io")
 	config, err := configuration.GetData()
-	assert.Nil(t, err)
+	require.NoError(t, err)
+	require.NotNil(t, config)
 
 	manager, err := token.NewManager(config)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	keys := manager.PublicKeys()
-	assert.NotEmpty(t, keys)
+	require.NotEmpty(t, keys)
 	for _, k := range keys {
-		assert.NotNil(t, k.N)
+		require.NotNil(t, k.N)
 	}
 }
